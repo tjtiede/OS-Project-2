@@ -43,14 +43,14 @@ class GradeEnvironment : public testing::Environment
 TEST(load_process_control_blocks, NullFile)
 {
 	dyn_array_t* array = load_process_control_blocks(NULL);
-	EXPECT_EQ(arr, nullptr);
+	EXPECT_EQ(array, nullptr);
 }
 
 //Tests to make sure all the pcb's in the folder have been added to the array.
 TEST(load_process_control_blocks, GoodRead)
 {
-	dyn_array_t* array = load_process_control_blocks('pcb.bin');
-	EXPECT_EQ(arr, 7);
+	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_EQ(dyn_array_size(array), 4);
 	dyn_array_destroy(array);
 }
 
