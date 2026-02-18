@@ -49,8 +49,55 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
 
 dyn_array_t *load_process_control_blocks(const char *input_file) 
 {
-	UNUSED(input_file);
-	return NULL;
+	/* 
+		If the file is null we treat that as an error and return null.
+	*/
+	if(input_file == NULL)
+	{
+		return NULL;
+	}
+	//Creates the file and opens the input file to be read as a binary file.
+	FILE* fp = NULL;
+	fp.fopen(input_file, "rb");
+	/*
+		If there is nothing in the file we close the file and return null because of an error.
+	*/
+	if(!fp)
+	{
+		fclose(fp);
+		return NULL;
+	}
+	//gives us the variable to store the processes and we read the process from the file and store it.
+	uint32_t process_num;
+	fread(&process_num, sizeof(process_num), 1, fp);
+	//Create the array with the correct size.
+	dyn_array_t* create_array = dyn_array_create(process_num, sizeof(ProcessControlBlock_t), NULL);
+	/*
+		If there is nothing in the array we treat that as an error  close the file and return null.
+	*/
+	if(create_array == NULL)
+	{
+		fclose(fp);
+		return NULL;
+	}
+	//Variable for our stuct.
+	ProcessControlBlock_t pcb;
+	/*
+		Loop through each process that we got from the file and read it from the file again.
+	*/
+	for(uint32_t i = 0; i < process_num; i++)
+	{
+		fread(&pcb, sizeof(pcb), 1, fp);
+		//Tells us that the process hasn't been activated on the virtual cpu.
+		pcb.started = false;
+		//Places the pcb just read at the back of the array and allocates another space for the next element in the file.
+		dyn_array_push_back(&pcb, create_array);
+	}
+	/*
+		When all the pcb's have been read we close the file and return the array of pcb's.
+	*/
+	fclose(fp);
+	return create_array;
 }
 
 bool shortest_remaining_time_first(dyn_array_t *ready_queue, ScheduleResult_t *result) 

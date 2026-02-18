@@ -35,6 +35,25 @@ class GradeEnvironment : public testing::Environment
 };
 */
 
+/*
+	Load_Process_Control_block tests
+*/
+
+//Tests that if the file is null we get a null back as an error because of a null pointer. 
+TEST(load_process_control_blocks, NullFile)
+{
+	dyn_array_t* array = load_process_control_blocks(NULL);
+	EXPECT_EQ(arr, nullptr);
+}
+
+//Tests to make sure all the pcb's in the folder have been added to the array.
+TEST(load_process_control_blocks, GoodRead)
+{
+	dyn_array_t* array = load_process_control_blocks('pcb.bin');
+	EXPECT_EQ(arr, 7);
+	dyn_array_destroy(array);
+}
+
 
 int main(int argc, char **argv)
 {
