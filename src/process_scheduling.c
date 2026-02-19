@@ -20,9 +20,48 @@ void virtual_cpu(ProcessControlBlock_t *process_control_block)
 
 bool first_come_first_serve(dyn_array_t *ready_queue, ScheduleResult_t *result) 
 {
-	UNUSED(ready_queue);
-	UNUSED(result);
-	return false;
+	//Defines the pcb blocks;
+	ProcessControlBlock_t pcb;
+	/*
+		Checks to make there are values in the ready queue and result if not returns false for an error.
+	*/
+	if(ready_queue == NULL || result == NULL)
+	{
+		return false;
+	}
+	//Defines variables needed to computer the times for the result
+	uint32_t waitTime = 0;
+	uint32_t currTime = 0;
+	uint32_t totalTurnaround = 0;
+	//Gets the size of the queue.
+	size_t processNum = dyn_array_size(ready_queue);
+	/*
+		Runs as long as the queue is not empty
+	*/
+	while(!dyn_array_empty(ready_queue))
+	{
+		//Removes the object that is on the top of queue and places it at that memory address allocated for the pcb.
+		dyn_array_extract_front(ready_queue, &pcb);
+		//Calculates how long the wait time was for the process to get taken off the queue.
+		waitTime += currTime - pcb.arrival;
+		/*
+			If there is still burst time for the pcbs we we decrement the burst time and increment the current time.
+		*/
+		while(pcb.remaining_burst_time > 0)
+		{
+			virtual_cpu(&pcb);
+			currTime++;
+		}
+		//Calculates the total time the process took.
+		totalTurnaround += currTime - pcb.arrival;
+	}
+	
+	//Computes the times for the result using the times calculated during the process of taking the process off the queue.
+	result->average_turnaround_time = (float)totalTurnaround / processNum;
+	result->average_waiting_time = (float)waitTime / processNum;
+	result->total_run_time = currTime;
+
+	return true;
 }
 
 bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result) 

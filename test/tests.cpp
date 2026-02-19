@@ -50,10 +50,35 @@ TEST(load_process_control_blocks, NullFile)
 TEST(load_process_control_blocks, GoodRead)
 {
 	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_NE(array, nullptr);
 	EXPECT_EQ(dyn_array_size(array), 4);
 	dyn_array_destroy(array);
 }
 
+/*
+	Tests for FCFS implementation
+*/
+//Tests to make sure we get an error when we have a null array.
+TEST(first_come_first_serve, nullvalue)
+{
+	ScheduleResult_t result;
+	bool success = first_come_first_serve(NULL, &result);
+	EXPECT_EQ(success, false);
+}
+
+//Tests to make sure we get a result greater than 0 for the times displayed in the result.
+TEST(first_come_first_serve, CorrectResult)
+{
+	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_NE(array, nullptr);
+	ScheduleResult_t result;
+	bool success = first_come_first_serve(array, &result); 
+	EXPECT_EQ(success, true);
+	EXPECT_GT(result.average_turnaround_time, 0.0f);
+	EXPECT_GT(result.average_waiting_time, 0.0f);
+	EXPECT_GT(result.total_run_time, 0UL);
+	dyn_array_destroy(array);
+}
 
 int main(int argc, char **argv)
 {
