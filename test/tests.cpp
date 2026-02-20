@@ -51,7 +51,7 @@ TEST(load_process_control_blocks, GoodRead)
 {
 	dyn_array_t* array = load_process_control_blocks("pcb.bin");
 	EXPECT_NE(array, nullptr);
-	EXPECT_EQ(dyn_array_size(array), 4);
+	EXPECT_EQ(dyn_array_size(array), (size_t)4);
 	dyn_array_destroy(array);
 }
 
