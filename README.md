@@ -11,3 +11,33 @@ You can manually copy the time analysis from console and paste it to this file, 
 ---------------------------------------------------------------------------
 Add your scheduling algorithm analysis below this line in a readable format.
 ---------------------------------------------------------------------------
+### Scheduling Algorithm Analysis:
+
+| First Come First Served |        | 
+|------------------------|---------|
+ |Average Turn around time |  15.2500 |
+  |Average waiting time |  10.500000 |
+ | Total time | 19 |
+
+
+
+| Round Robin |  quantum = 4      | 
+|------------------------|---------|
+ |Average Turn around time |   8.250000 |
+  |Average waiting time |  3.500000 |
+ | Total time | 19 |
+
+
+| Shortest Job First |        | 
+|------------------------|---------|
+ |Average Turn around time |  5.000000 |
+  |Average waiting time | 0.250000 |
+ | Total time | 19 |
+
+
+
+| Shortest Remaining Time First |        | 
+|------------------------|---------|
+ |Average Turn around time |   6.250000 |
+  |Average waiting time |  1.500000 |
+ | Total time | 19 |

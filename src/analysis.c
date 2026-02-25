@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	/*
 		Makes sure the algorithm we are calling is the correct algorithm.
 	*/
-	if(strcmp(argv[2], "fcfs") == 0)
+	if(strcmp(argv[2], FCFS) == 0)
 	{
 		/*
 			Makes sure there are no errors in the file that makes the algorithm return an error.
@@ -44,6 +44,40 @@ int main(int argc, char **argv)
 			dyn_array_destroy(ready_queue);
 			return EXIT_FAILURE;
 		}
+	}
+	else if(strcmp(argv[2], RR) == 0)
+	{
+		if(argc < 4)
+        {
+            printf("Round Robin requires quantum parameter\n");
+            dyn_array_destroy(ready_queue);
+            return EXIT_FAILURE;
+        }
+        size_t quantum = atoi(argv[3]);
+        if(!round_robin(ready_queue, &result, quantum))
+        {
+            printf("Error running Round Robin\n");
+            dyn_array_destroy(ready_queue);
+            return EXIT_FAILURE;
+        }
+	}
+	else if(strcmp(argv[2], SJF) == 0)
+	{
+		if(!shortest_job_first(ready_queue, &result))
+        {
+            printf("Error running Shortest Job First\n");
+            dyn_array_destroy(ready_queue);
+            return EXIT_FAILURE;
+        }
+	}
+	else if(strcmp(argv[2], SRT) == 0)
+	{
+		if(!shortest_remaining_time_first(ready_queue, &result))
+        {
+            printf("Error running Shortest Remaining Time First\n");
+            dyn_array_destroy(ready_queue);
+            return EXIT_FAILURE;
+        }
 	}
 	/*
 		If we ask for the wrong algorithm or type the wrong thing returns an error saying that string input is not 

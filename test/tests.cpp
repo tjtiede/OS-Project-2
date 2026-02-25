@@ -80,6 +80,79 @@ TEST(first_come_first_serve, CorrectResult)
 	dyn_array_destroy(array);
 }
 
+
+/*
+	SHORTEST JOB FIRST TESTS
+*/
+
+TEST(shortest_job_first, nullvalue)
+{
+	ScheduleResult_t result;
+	bool success = shortest_job_first(NULL, &result);
+	EXPECT_EQ(success, false);
+}
+
+TEST(shortest_job_first, CorrectResult)
+{
+	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_NE(array, nullptr);
+	ScheduleResult_t result;
+	bool success = shortest_job_first(array, &result); 
+	EXPECT_EQ(success, true);
+	EXPECT_GT(result.average_turnaround_time, 0.0f);
+	EXPECT_GT(result.average_waiting_time, 0.0f);
+	EXPECT_GT(result.total_run_time, 0UL);
+	dyn_array_destroy(array);
+}
+
+
+/*
+	ROUND ROBIN TESTS
+*/
+TEST(round_robin, nullvalue)
+{
+	ScheduleResult_t result;
+	bool success = round_robin(NULL, &result, QUANTUM);
+	EXPECT_EQ(success, false);
+}
+
+TEST(round_robin, CorrectResult)
+{
+	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_NE(array, nullptr);
+	ScheduleResult_t result;
+	bool success = round_robin(array, &result, QUANTUM); 
+	EXPECT_EQ(success, true);
+	EXPECT_GT(result.average_turnaround_time, 0.0f);
+	EXPECT_GT(result.average_waiting_time, 0.0f);
+	EXPECT_GT(result.total_run_time, 0UL);
+	dyn_array_destroy(array);
+}
+
+/*
+	SHORTEST REMAINING TIME FIRST TESTS
+*/
+
+TEST(shortest_remaining_time_first, nullvalue)
+{
+	ScheduleResult_t result;
+	bool success = shortest_remaining_time_first(NULL, &result);
+	EXPECT_EQ(success, false);
+}
+
+TEST(shortest_remaining_time_first, CorrectResult)
+{
+	dyn_array_t* array = load_process_control_blocks("pcb.bin");
+	EXPECT_NE(array, nullptr);
+	ScheduleResult_t result;
+	bool success = shortest_remaining_time_first(array, &result); 
+	EXPECT_EQ(success, true);
+	EXPECT_GT(result.average_turnaround_time, 0.0f);
+	EXPECT_GT(result.average_waiting_time, 0.0f);
+	EXPECT_GT(result.total_run_time, 0UL);
+	dyn_array_destroy(array);
+}
+
 int main(int argc, char **argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
