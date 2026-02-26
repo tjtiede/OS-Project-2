@@ -85,7 +85,7 @@ int main(int argc, char **argv)
         }
 	}
 	//PRIORITY
-	else if (strcmp(argv[2], P)){
+	else if (strcmp(argv[2], P)==0){
 		if(!priority(ready_queue, &result)){
 			printf("Error running Priority\n");
 			dyn_array_destroy(ready_queue);

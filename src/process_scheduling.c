@@ -9,7 +9,6 @@
 
 // You might find this handy.  I put it around unused parameters, but you should
 // remove it before you submit. Just allows things to compile initially.
-#define UNUSED(x) (void)(x)
 
 // private function
 void virtual_cpu(ProcessControlBlock_t *process_control_block) 
@@ -66,6 +65,7 @@ bool first_come_first_serve(dyn_array_t *ready_queue, ScheduleResult_t *result)
 
 bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result) 
 {
+	//If ready_queue or result are NULL return false
 	if(ready_queue == NULL || result == NULL){
 		return false;
 	}
@@ -83,7 +83,6 @@ bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result)
 
 	// Extract all processes, sort by burst time, push back into order
 	ProcessControlBlock_t *pcbs = malloc(processNum * sizeof(ProcessControlBlock_t));
-
 	if(pcbs == NULL){
 		return false;
 	}
@@ -111,7 +110,7 @@ bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result)
 
 	free(pcbs);
 
-
+	//Simulate CPU 
 	ProcessControlBlock_t pcb;
 	while(!dyn_array_empty(ready_queue)){
 		dyn_array_extract_front(ready_queue, &pcb);
@@ -124,7 +123,7 @@ bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result)
 		totalTurnaround += currTime - pcb.arrival;
 	}
 
-
+	//Store values in result struct
 	result->average_turnaround_time = (float)totalTurnaround / processNum;
 	result->average_waiting_time = (float)waitTime / processNum;
 	result->total_run_time = currTime;
@@ -132,21 +131,16 @@ bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result)
 	return true;
 }
 
-/*
-	first process 1 arrives
-		Complete the Process
-	Once P1 is finished check for all other arrived Processes
-	Next highest Priority Process begins
 
-*/
 
 
 bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result) 
 {
+	//If ready_queue or result are NULL return false
 	if(ready_queue == NULL || result == NULL){
 		return false;
 	}
-
+	//Get the size of the queue
 	size_t processNum = dyn_array_size(ready_queue);
     if (processNum == 0)
     {
@@ -168,7 +162,7 @@ bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result)
 		dyn_array_extract_front(ready_queue, &pcbs[i]);
 	}
 
-	// Insertion sort by remaining_burst_time
+	// Insertion sort by priority
 	for(size_t i = 1; i < processNum; i++){
 		ProcessControlBlock_t key = pcbs[i];
 		int j = (int)i-1;
@@ -179,13 +173,14 @@ bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result)
 		}
 		pcbs[j+1] = key;
 	}
-
+	//Push values back into the queue
 	for(size_t i = 0; i<processNum; i++){
 		dyn_array_push_back(ready_queue, &pcbs[i]);
 	}
 
 	free(pcbs);
 
+	//Simulate the CPU
 	ProcessControlBlock_t pcb;
 	while(!dyn_array_empty(ready_queue)){
 		dyn_array_extract_front(ready_queue, &pcb);
@@ -197,7 +192,7 @@ bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result)
 		}
 		totalTurnaround += currTime - pcb.arrival;
 	}
-
+	//Store results in result struct
 	result->average_waiting_time = (float)waitTime / processNum;
     result->average_turnaround_time = (float)totalTurnaround / processNum;
     result->total_run_time = currTime;
@@ -208,11 +203,12 @@ bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result)
 
 bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quantum) 
 {
+	//If ready_queue or result are NULL or if quantum is 0, return false
     if (ready_queue == NULL || result == NULL || quantum == 0)
     {
         return false;
     }
-
+	//Get queue size
     size_t processNum = dyn_array_size(ready_queue);
     if (processNum == 0)
     {
@@ -223,11 +219,12 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
     uint32_t waitTime = 0;
     uint32_t totalTurnaround = 0;
 
+	
     ProcessControlBlock_t *pcbs = malloc(processNum * sizeof(ProcessControlBlock_t));
     if (pcbs == NULL){
 		return false;
 	} 
-
+	//extract all burst times for each process
     uint32_t *originalBurst = malloc(processNum * sizeof(uint32_t));
     if (originalBurst == NULL)
     {
@@ -235,7 +232,7 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
         return false;
     }
 
-    // Extract all processes from queue ONCE
+    // Extract all processes from queue, store in pcbs and store original burst times
     for (size_t i = 0; i < processNum; i++)
     {
         ProcessControlBlock_t *pcb = (ProcessControlBlock_t *)dyn_array_at(ready_queue, i);
@@ -246,16 +243,18 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
             return false;
         }
         pcbs[i] = *pcb;
-        originalBurst[i] = pcbs[i].remaining_burst_time;
+        originalBurst[i] = pcbs[i].remaining_burst_time; //store burst time values
     }
 
 	size_t completed = 0;
     size_t idx = 0;
 
+	//While not completed
     while (completed < processNum)
     {
         // Find next process with remaining time
         size_t checks = 0;
+		
         while (pcbs[idx].remaining_burst_time == 0 && checks < processNum)
         {
             idx = (idx + 1) % processNum;
@@ -265,7 +264,7 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
         // If no process found exit
         if (checks == processNum)
             break;
-
+		//Run current process for the given quantum time units
 		size_t ran = 0;
     	while (pcbs[idx].remaining_burst_time > 0 && ran < quantum)
     	{
@@ -274,17 +273,17 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
         	ran++;
     	}
         
-
+		//If process is finished, record time values
         if (pcbs[idx].remaining_burst_time == 0)
         {
             totalTurnaround += currTime - pcbs[idx].arrival;
             waitTime += (currTime - pcbs[idx].arrival) - originalBurst[idx];
             completed++;
         }
-
+		//Move to next process
         idx = (idx + 1) % processNum;
     }
-
+	//Store result values in result struct
     result->average_waiting_time = (float)waitTime / processNum;
     result->average_turnaround_time = (float)totalTurnaround / processNum;
     result->total_run_time = currTime;
@@ -334,7 +333,10 @@ dyn_array_t *load_process_control_blocks(const char *input_file)
 	*/
 	for(uint32_t i = 0; i < process_num; i++)
 	{
-		fread(&pcb, sizeof(pcb), 1, fp);
+		//fread(&pcb, sizeof(pcb), 1, fp);
+		fread(&pcb.remaining_burst_time, sizeof(uint32_t), 1, fp);
+        fread(&pcb.priority, sizeof(uint32_t), 1, fp);
+        fread(&pcb.arrival, sizeof(int32_t), 1, fp);
 		//Tells us that the process hasn't been activated on the virtual cpu.
 		pcb.started = false;
 		//Places the pcb just read at the back of the array and allocates another space for the next element in the file.
@@ -349,6 +351,7 @@ dyn_array_t *load_process_control_blocks(const char *input_file)
 
 bool shortest_remaining_time_first(dyn_array_t *ready_queue, ScheduleResult_t *result) 
 {
+	//If ready_
 	if(ready_queue == NULL || result == NULL){
 		return false;
 	}

@@ -15,29 +15,36 @@ Add your scheduling algorithm analysis below this line in a readable format.
 
 | First Come First Served |        | 
 |------------------------|---------|
- |Average Turn around time |  15.2500 |
-  |Average waiting time |  10.500000 |
- | Total time | 19 |
+ |Average Turn around time |  28.50 |
+  |Average waiting time |  16.00 |
+ | Total time |  50 |
 
 
 
 | Round Robin |  quantum = 4      | 
 |------------------------|---------|
- |Average Turn around time |   8.250000 |
-  |Average waiting time |  3.500000 |
- | Total time | 19 |
+ |Average Turn around time |   36.50 |
+  |Average waiting time |  24.00 |
+ | Total time | 50 |
 
 
 | Shortest Job First |        | 
 |------------------------|---------|
- |Average Turn around time |  5.000000 |
-  |Average waiting time | 0.250000 |
- | Total time | 19 |
+ |Average Turn around time |  23.50 |
+  |Average waiting time | 11.00 |
+ | Total time | 50 |
 
 
 
 | Shortest Remaining Time First |        | 
 |------------------------|---------|
- |Average Turn around time |   6.250000 |
-  |Average waiting time |  1.500000 |
- | Total time | 19 |
+ |Average Turn around time |   23.50 |
+  |Average waiting time |  11.00 |
+ | Total time | 50 |
+
+
+ | Priority |        | 
+|------------------------|---------|
+ |Average Turn around time |  50 |
+  |Average waiting time |  16.00 |
+ | Total time | 50 |
