@@ -265,7 +265,11 @@ dyn_array_t *load_process_control_blocks(const char *input_file)
 	*/
 	for(uint32_t i = 0; i < process_num; i++)
 	{
-		fread(&pcb, sizeof(pcb), 1, fp);
+		fread(&pcb.remaining_burst_time, sizeof(uint32_t), 1, fp);
+        fread(&pcb.priority, sizeof(uint32_t), 1, fp);
+        fread(&pcb.arrival, sizeof(int32_t), 1, fp);
+
+		//fread(&pcb, sizeof(pcb), 1, fp);
 		//Tells us that the process hasn't been activated on the virtual cpu.
 		pcb.started = false;
 		//Places the pcb just read at the back of the array and allocates another space for the next element in the file.
