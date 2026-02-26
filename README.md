@@ -45,6 +45,6 @@ Add your scheduling algorithm analysis below this line in a readable format.
 
  | Priority |        | 
 |------------------------|---------|
- |Average Turn around time |  50 |
+ |Average Turn around time |  28.50 |
   |Average waiting time |  16.00 |
  | Total time | 50 |
