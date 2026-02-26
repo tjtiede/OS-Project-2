@@ -33,6 +33,8 @@ int main(int argc, char **argv)
 	/*
 		Makes sure the algorithm we are calling is the correct algorithm.
 	*/
+
+	//FIRST COME FIRST SERVE
 	if(strcmp(argv[2], FCFS) == 0)
 	{
 		/*
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	}
+	//ROUND ROBIN
 	else if(strcmp(argv[2], RR) == 0)
 	{
 		if(argc < 4)
@@ -61,6 +64,7 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 	}
+	//SHORTEST JOB FIRST
 	else if(strcmp(argv[2], SJF) == 0)
 	{
 		if(!shortest_job_first(ready_queue, &result))
@@ -70,6 +74,7 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 	}
+	//SHORTEST TIME REMAINING
 	else if(strcmp(argv[2], SRT) == 0)
 	{
 		if(!shortest_remaining_time_first(ready_queue, &result))
@@ -78,6 +83,14 @@ int main(int argc, char **argv)
             dyn_array_destroy(ready_queue);
             return EXIT_FAILURE;
         }
+	}
+	//PRIORITY
+	else if (strcmp(argv[2], P)){
+		if(!priority(ready_queue, &result)){
+			printf("Error running Priority\n");
+			dyn_array_destroy(ready_queue);
+			return EXIT_FAILURE;
+		}
 	}
 	/*
 		If we ask for the wrong algorithm or type the wrong thing returns an error saying that string input is not 

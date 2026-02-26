@@ -132,11 +132,78 @@ bool shortest_job_first(dyn_array_t *ready_queue, ScheduleResult_t *result)
 	return true;
 }
 
+/*
+	first process 1 arrives
+		Complete the Process
+	Once P1 is finished check for all other arrived Processes
+	Next highest Priority Process begins
+
+*/
+
+
 bool priority(dyn_array_t *ready_queue, ScheduleResult_t *result) 
 {
-	UNUSED(ready_queue);
-	UNUSED(result);
-	return false;
+	if(ready_queue == NULL || result == NULL){
+		return false;
+	}
+
+	size_t processNum = dyn_array_size(ready_queue);
+    if (processNum == 0)
+    {
+        return false;
+    }
+
+    uint32_t currTime = 0;
+    uint32_t waitTime = 0;
+    uint32_t totalTurnaround = 0;
+	
+
+	//Extract all Process Control Blocks to sort by priority
+	 ProcessControlBlock_t *pcbs = malloc(processNum * sizeof(ProcessControlBlock_t));
+    if (pcbs == NULL){
+		return false;
+	} 
+
+	for(size_t i = 0; i<processNum; i++){
+		dyn_array_extract_front(ready_queue, &pcbs[i]);
+	}
+
+	// Insertion sort by remaining_burst_time
+	for(size_t i = 1; i < processNum; i++){
+		ProcessControlBlock_t key = pcbs[i];
+		int j = (int)i-1;
+
+		while (j>=0 && pcbs[j].priority > key.priority){
+			pcbs[j + 1] = pcbs[j];
+			j--;
+		}
+		pcbs[j+1] = key;
+	}
+
+	for(size_t i = 0; i<processNum; i++){
+		dyn_array_push_back(ready_queue, &pcbs[i]);
+	}
+
+	free(pcbs);
+
+	ProcessControlBlock_t pcb;
+	while(!dyn_array_empty(ready_queue)){
+		dyn_array_extract_front(ready_queue, &pcb);
+		waitTime += currTime - pcb.arrival;
+
+		while (pcb.remaining_burst_time >0){
+			virtual_cpu(&pcb);
+			currTime ++;
+		}
+		totalTurnaround += currTime - pcb.arrival;
+	}
+
+	result->average_waiting_time = (float)waitTime / processNum;
+    result->average_turnaround_time = (float)totalTurnaround / processNum;
+    result->total_run_time = currTime;
+
+	return true;
+
 }
 
 bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quantum) 
@@ -157,7 +224,9 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
     uint32_t totalTurnaround = 0;
 
     ProcessControlBlock_t *pcbs = malloc(processNum * sizeof(ProcessControlBlock_t));
-    if (pcbs == NULL) return false;
+    if (pcbs == NULL){
+		return false;
+	} 
 
     uint32_t *originalBurst = malloc(processNum * sizeof(uint32_t));
     if (originalBurst == NULL)
@@ -193,7 +262,7 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
             checks++;
         }
 
-        // If no process found, we're done
+        // If no process found exit
         if (checks == processNum)
             break;
 
@@ -216,9 +285,9 @@ bool round_robin(dyn_array_t *ready_queue, ScheduleResult_t *result, size_t quan
         idx = (idx + 1) % processNum;
     }
 
-    result->average_waiting_time    = (float)waitTime       / processNum;
+    result->average_waiting_time = (float)waitTime / processNum;
     result->average_turnaround_time = (float)totalTurnaround / processNum;
-    result->total_run_time          = currTime;
+    result->total_run_time = currTime;
 
     free(pcbs);
     free(originalBurst);
@@ -284,7 +353,7 @@ bool shortest_remaining_time_first(dyn_array_t *ready_queue, ScheduleResult_t *r
 		return false;
 	}
 
-	size_t = processNum = dyn_array_size(ready_queue);
+	size_t processNum = dyn_array_size(ready_queue);
 	if(processNum == 0){
 		return false;
 	}
@@ -324,7 +393,7 @@ bool shortest_remaining_time_first(dyn_array_t *ready_queue, ScheduleResult_t *r
             }
         }
 
-        // If no process found, we're done
+        // If no process found exit
         if (shortest_idx == -1)
             break;
 
