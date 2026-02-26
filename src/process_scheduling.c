@@ -340,7 +340,7 @@ dyn_array_t *load_process_control_blocks(const char *input_file)
 		//Tells us that the process hasn't been activated on the virtual cpu.
 		pcb.started = false;
 		//Places the pcb just read at the back of the array and allocates another space for the next element in the file.
-		dyn_array_push_back(&pcb, create_array);
+		dyn_array_push_back(create_array, &pcb);
 	}
 	/*
 		When all the pcb's have been read we close the file and return the array of pcb's.
