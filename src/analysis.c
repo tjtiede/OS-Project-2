@@ -47,38 +47,47 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	}
-	//ROUND ROBIN
+	//Block to run Round Robin and makes sure we are calling the right algorithm
 	else if(strcmp(argv[2], RR) == 0)
 	{
+		//Checks to see if we have a quantum number argument when we run the algorithm
 		if(argc < 4)
         {
+			//If there is no argument for quantum error is printed and queue is released from memory
             printf("Round Robin requires quantum parameter\n");
             dyn_array_destroy(ready_queue);
             return EXIT_FAILURE;
         }
+		//Converts the quantum number as a string to the integer value.
         size_t quantum = atoi(argv[3]);
+		//Makes sure there are no errors in the Round Robin algorithm in the process_scheduling file.
         if(!round_robin(ready_queue, &result, quantum))
         {
+			//If there are errors a error message is displayed and we release the queue from memory
             printf("Error running Round Robin\n");
             dyn_array_destroy(ready_queue);
             return EXIT_FAILURE;
         }
 	}
-	//SHORTEST JOB FIRST
+	//Block to run Shortest job first and makes sure we are calling the right algorithm
 	else if(strcmp(argv[2], SJF) == 0)
 	{
+		//Makes sure there are no errors in the shortest job first algorithm in process_scheduling file.
 		if(!shortest_job_first(ready_queue, &result))
         {
+			//If there is an error we print an error and release the queue from memory.
             printf("Error running Shortest Job First\n");
             dyn_array_destroy(ready_queue);
             return EXIT_FAILURE;
         }
 	}
-	//SHORTEST TIME REMAINING
+	//Block to run shortest time remaining first and makes sure we are calling the right algorithm.
 	else if(strcmp(argv[2], SRT) == 0)
 	{
+		//Checks to make sure there are no errors in the SRT algorithm in process_scheduling file.
 		if(!shortest_remaining_time_first(ready_queue, &result))
         {
+			//If there is an error we print the error statement and release the queue from memory
             printf("Error running Shortest Remaining Time First\n");
             dyn_array_destroy(ready_queue);
             return EXIT_FAILURE;
@@ -86,7 +95,9 @@ int main(int argc, char **argv)
 	}
 	//PRIORITY
 	else if (strcmp(argv[2], P)==0){
+		//Checks to make sure there are no errors in the priority algorithm in process_scheduling file.
 		if(!priority(ready_queue, &result)){
+			//If there is an error we print the error statement and release the queue from memory
 			printf("Error running Priority\n");
 			dyn_array_destroy(ready_queue);
 			return EXIT_FAILURE;
@@ -108,5 +119,6 @@ int main(int argc, char **argv)
 	printf("Total time: %ld\n", result.total_run_time);
 	dyn_array_destroy(ready_queue);
 
+	//returns if the algorithm that was ran was run successfully.
 	return EXIT_SUCCESS;
 }
